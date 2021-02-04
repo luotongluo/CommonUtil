@@ -4,6 +4,7 @@
 - [工具类介绍](#工具类介绍)
     - [FastJsonUtil(FastJson工具类)](#fastjsonutilfastjson工具类)
     - [DateUtil(时间转换工具类)](#dateutil时间转换工具类)
+    - [CsvUtil(CSV文件工具类)](#csvutilcsv文件工具类)
     - [RegexUtil(正则工具类)](#regexutil正则工具类)
     - [LanguageUtil(语言工具类)](#languageutil语言工具类)
     - [NetworkUtil(获取本地IP和主机名工具类)](#networkutil获取本地ip和主机名工具类)
@@ -16,21 +17,24 @@
     - [GZIPUtil(通过Gzip算法压缩和解压)](#gziputil通过gzip算法压缩和解压)
     - [CaptchaUtil(验证码工具类)](#captchautil验证码工具类)
     - [UrlParamsUtil（对URL参数处理的工具类）](#urlparamsutil对url参数处理的工具类)
+    - [LangArabicNumConvertUtil(语言数字与阿拉伯数字转换工具类)](#langarabicnumconvertutil语言数字与阿拉伯数字转换工具类)
+    - [StringUtil(字符串工具类)](#stringutil字符串工具类)
     - [EmailUtil(邮件发送工具类)](#emailutil邮件发送工具类)
+    - [XmlConfUtil(解析XMl配置工具类)](#xmlconfutil解析XMl配置工具类)
 - [关于开源](#关于开源)
 - [Contributor](#contributor)
 - [更新日志](#更新日志)
 
 ## 概述
 
-本仓库是Java开发常用工具类的总结，如果对你有用欢迎点个start，此外，如果你有兴趣和我一起维护该仓库，欢迎提PR或者issue，让我们为拥有一个更强大的工具库而一同努力。
+本仓库是Java开发常用工具类的总结，旨在追求给大家提供一个轻便简单的工具类库，同时能够cover住大家80%以上的工具类的需求。如果对你有用欢迎点个star，此外，如果你有兴趣和我一起维护该仓库，欢迎提PR或者issue，让我们为拥有一个更强大的工具库而一同努力。
 
 ## 导入项目
 ```
 <dependency>
       <groupId>io.github.ljwlgl</groupId>
       <artifactId>common-util</artifactId>
-      <version>2.0.9</version>
+      <version>2.1.0</version>
 </dependency>
 ```
 ## 工具类介绍
@@ -72,6 +76,13 @@
     - 昨天：昨天 + 小时分钟（昨天 08:30）
     - 昨天之前并在当年内：某月某日 + 小时分钟（1月1日 08:30）
     - 隔年：某年某月某日 + 小时分钟（2017年1月1日 08:30）
+
+### **CsvUtil(CSV文件工具类)**
+csv作为开发常常需要处理的文件格式，本项目主要提供以下工具方法：
+- **List<String[]> read(String filePath, String code, boolean needHeader)**，读取CSV文件，（参数说明，needHeader：是否需要列标题;）
+- **List<String[]> read(InputStream inputStream, Charset charset, boolean needHeader, int[] columns)**，读取CSV文件，（参数说明，needHeader：是否需要列标题；columns： 指定读取csv文件的哪几列，如果为null，则读取全部列）
+- **List<String[]> read(...)**，读取CSV文件的多个重载方法
+- **write(List<String[]> list, String filePath, boolean append)**，写入CSV文件（参数说明，append：是否以追加的方式写入）
 
 ### **RegexUtil(正则工具类)**
 - **isMobileExact(CharSequence input)**，是否是手机号
@@ -129,7 +140,6 @@
 - **encodeUrl(String str)**，对URL编码
 - **decodeUrl(String str)**，对URL解码
 
-
 ### **ProtobufUtil(提供Protobuf格式的序列化和反序列)**
 - **<T> byte[] serialize(T obj)**，序列化对象
 - **<T> byte[] serializeList(List<T> objList)**，序列化数组
@@ -158,9 +168,77 @@
 -  **Map<String, String> build(String ... keyValues)**，将keyValues转成Map
 -  **add(Map<String, String> originMap, String ... keyValues)**，在原Map添加keyValues
 
+### **LangArabicNumConvertUtil(语言数字与阿拉伯数字转换工具类)**
+- **String lang2ArabicNumber(String word, String majorLocale)**，将语言数字转成阿拉伯数字，目前只支持英语和中文的转换，使用请参考示例[LangArabicNumConvertUtil](#LangArabicNumConvertUtil)（参数说明，majorLocale：中文zh或英语en）
+- **String arabic2LangNumber(String word, String majorLocale)**，将阿拉伯数字转成语言数字，会转成带进制的语言数字（如，16会转成十六），使用请参考示例[LangArabicNumConvertUtil](#LangArabicNumConvertUtil)
+- **String arabic2NoDecimalLangNumber(String word, String majorLocale)**，将阿拉伯数字转成语言数字，会转成不带进制的语言数字（如，16会转成一六），使用请参考示例[LangArabicNumConvertUtil](#LangArabicNumConvertUtil)
+### **StringUtil(字符串工具类)**
+对于字符串工具类，优先推荐使用org.apache.commons.lang3下的StringUtils以及java.lang.String的自带方法，本工具类只是补充了一些个别方法。
+- **String replaceString(String str, Map<String, String> oldNewMap)**， 批量替换字符
+- **String subArr2String(int i, int j, char[] arr)**，将字符数组的子集合成新的字符串
+- **String subArr2String(int i, int j, String[] arr, String separator)**，将字符串数组的子串合成一个新的字符串
+- **double castDouble(Object obj, double defaultValue)**，转为double类型 ，如果obj为null或者空字符串或者格式不对则返回defaultValue
+- **double cast...(Object obj, double defaultValue)**，转换成对应的基础类型
+
 ### **EmailUtil(邮件发送工具类)**
 
-邮件工具类是通过JavaEmail实现，企业级项目一般都会专门的服务去发送邮件，但如果自己的小Demo，用工具类发送Email也未尝不可。示例Demo如下，有兴趣的可以fork代码自己研究一下，代码有详情的注释。
+邮件工具类是通过JavaEmail实现，企业级项目一般都会专门的服务去发送邮件，但如果自己的小Demo，用工具类发送Email也未尝不可。
+可参考[EmailUtil](#EmailUtil)如下，有兴趣的可以fork代码自己研究一下，代码有详情的注释。
+
+### **xmlconfutil解析XMl配置工具类**
+解析工具通过JAXB实现，主要用于xml配置文件的实例化，以及生成配置类javaBean对应的xml
+- **<T> T xml2JBean(Class<?> clazz, InputStream in)**，将xml实例化为T类型实例
+- **void jBean2Xml(Object instance, OutputStream out)**，将配置类实例instance解析为xml
+
+## 关于开源
+本项目是开源项目，若有摘取本项目的代码，请注明出处！（码字不易，请尊重开源精神）
+
+## Contributor
+
+下面是笔者收集的一些对本仓库提过有价值的pr或者issue的朋友，如果你也对本仓库提过不错的pr或者issue的话，你可以发邮件（2715815264@qq.com）与我联系。
+
+<a href="https://github.com/LJWLgl">
+    <img src="https://avatars1.githubusercontent.com/u/22522146?s=460&u=34378925405f18325ea493aa7df788410d6204e3&v=4" width="45px">
+</a>
+<a href="https://github.com/fansengithub">
+    <img src="https://avatars1.githubusercontent.com/u/16862948?s=400&v=4" width="45px">
+</a>
+<a href="https://github.com/927376346">
+    <img src="https://avatars2.githubusercontent.com/u/34704332?s=400&v=4" width="45px">
+</a>
+<a href="https://github.com/drinkagain">
+    <img src="https://avatars2.githubusercontent.com/u/29560256?s=400&u=03abc1be6f633c0afbbfc07ec9bdeb9fd3e86a09&v=4" width="45px">
+</a>
+<a href="https://github.com/lizeze">
+    <img src="https://avatars2.githubusercontent.com/u/33169073?s=400&u=f48fa869f2a1739f7716ac80c181300473833796&v=4" width="45px">
+<a href="https://github.com/leithda">
+    <img src="https://avatars1.githubusercontent.com/u/18017935?s=460&u=11a8d9036b8560dc6b1d335e9b1b4f8f5bdbdf48&v=4" width="45px">	
+</a>
+
+
+**简单说明PR原则**
+
+- 注释需要完备，应该对新增的每个方法标注方法说明，同时对传入参数和返回参数也要相应的说明
+- 充分的Unit Test，保证每行代码和分支都要覆盖到
+- 代码规范，请遵循[阿里巴巴Java开发手册](https://yq.aliyun.com/articles/69327)
+
+## 使用示例
+### LangArabicNumConvertUtil
+```java
+// 中文转阿拉伯数字示例
+LangArabicNumConvertUtil.lang2ArabicNumber("北京三里墩五星小区第陆拾肆栋六零二室", "zh");
+// 英文转阿拉伯数字示例
+LangArabicNumConvertUtil.lang2ArabicNumber("six six six Beijing abnormalities mottoes Litun two hundred and sixties-five Hotel seven thousand eight hundred and ninety-four", "en")
+// 阿拉伯数字转中文
+LangArabicNumConvertUtil.arabic2LangNumber("北京3里墩5星小区第64栋602室", "zh")
+
+// 输出
+// 北京3里墩5星小区第64栋602室
+// 666 beijing abnormalities mottoes litun 200 and sixties-five hotel 7894
+// 北京三里墩五星小区第六十四栋六百零二室
+```
+
+### EmailUtil
 ```java
 public class EmailUtilTest {
     @Before
@@ -177,38 +255,16 @@ public class EmailUtilTest {
 }
 ```
 
-## 关于开源
-
-本项目是开源项目，若有摘取本项目的代码，请注明出处！（码字不易，请尊重开源精神）
-
-
-## Contributor
-
-下面是笔者收集的一些对本仓库提过有价值的pr或者issue的朋友，如果你也对本仓库提过不错的pr或者issue的话，你可以发邮件（2715815264@qq.com）与我联系。
-
-<a href="https://github.com/LJWLgl">
-    <img src="https://avatars1.githubusercontent.com/u/22522146?s=460&u=34378925405f18325ea493aa7df788410d6204e3&v=4" width="45px">
-</a>
-<a href="https://github.com/fansengithub">
-    <img src="https://avatars1.githubusercontent.com/u/16862948?s=400&v=4" width="45px">
-</a>
-
-**简单说明PR原则**
-
-- 注释需要完备，应该对新增的每个方法标注方法说明，同时对传入参数和返回参数也要相应的说明
-- 充分的Unit Test，保证每行代码和分支都要覆盖到
-- 代码规范，请遵循[阿里巴巴Java开发手册](https://yq.aliyun.com/articles/69327)
-
 ## 更新日志
 - 2018年08月
 	- 创建项目
-- 2020年05月22日
-	- 新增LanguageUtil 
-	-  发布2.0.7版本
-- 2020年05月24日
-	- 新增EncodeDecodeUtil、CaptchaUtil
-	-  发布2.0.8版本
-- 2020年05月27日
-	- 修复BigDecimalUtil错误的构造方法
-	- 补充一些method的注释
-	- 发布2.0.9版本	 	
+- 2020年05月
+	- 新增LanguageUtil、EncodeDecodeUtil、CaptchaUtil
+	- 发布2.0.7、2.0.8、2.0.9版本
+    - 修复BigDecimalUtil错误的构造方法
+    - 补充一些method的注释
+- 2020年06月
+    - 发布2.1.0版本
+    - 新增CsvUtil、LangArabicNumConvertUtil、StringUtil
+    - 补充单元测试	
+	 	
